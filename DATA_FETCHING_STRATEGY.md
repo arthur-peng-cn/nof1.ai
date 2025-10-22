@@ -27,6 +27,57 @@
 2. 保持前端代码简洁
 3. 提供统一的错误处理点
 
+## 数据结构说明
+
+### 1. 加密货币价格数据结构
+
+```json
+{
+  "prices": {
+    "BTC": {
+      "symbol": "BTC",
+      "price": 108286.5,
+      "timestamp": 1761101085670
+    },
+    "ETH": {
+      "symbol": "ETH",
+      "price": 3864.15,
+      "timestamp": 1761101085670
+    }
+  },
+  "serverTime": 1761101085670
+}
+```
+
+### 2. 持仓数据结构
+
+持仓数据包含多个模型的持仓信息，每个模型可能持有多币种仓位：
+
+```json
+{
+  "positions": [
+    {
+      "id": "model_name",
+      "positions": {
+        "BTC": {
+          "entry_price": 106848.5,
+          "current_price": 108264.5,
+          "quantity": 0.09355,
+          "unrealized_pnl": 132.46679999999998,
+          "leverage": 1,
+          "confidence": 0.62,
+          "exit_plan": {
+            "profit_target": 2.6485,
+            "stop_loss": 2.1877
+          }
+        }
+      }
+    }
+  ],
+  "serverTime": 1761101618869
+}
+```
+
 ## 数据获取策略
 
 ### 1. 加密货币价格数据 (/api/crypto-prices)
@@ -42,6 +93,7 @@
     name: string;
     price: number;
     change: number;
+    timestamp: number;
     icon?: string;
   }
   ```
@@ -59,6 +111,28 @@
 - **更新频率**: 每分钟轮询一次
 - **缓存策略**: 无缓存，实时获取
 - **错误处理**: 显示错误消息，继续轮询
+- **数据结构**:
+  ```typescript
+  interface Position {
+    id: string; // 模型ID
+    positions: {
+      [symbol: string]: PositionDetails;
+    };
+  }
+  
+  interface PositionDetails {
+    entry_price: number;
+    current_price: number;
+    quantity: number;
+    unrealized_pnl: number;
+    leverage: number;
+    confidence: number;
+    exit_plan: {
+      profit_target?: number;
+      stop_loss?: number;
+    };
+  }
+  ```
 
 ### 4. 交易数据 (/api/trades)
 

@@ -26,12 +26,62 @@ export interface CryptoPrice {
   name: string;
   price: number;
   change: number;
+  timestamp: number;
   icon?: string;
 }
 
+export interface CryptoPricesResponse {
+  prices: {
+    [symbol: string]: {
+      symbol: string;
+      price: number;
+      timestamp: number;
+    };
+  };
+  serverTime: number;
+}
+
+// Position data interfaces
+export interface ExitPlan {
+  profit_target?: number;
+  stop_loss?: number;
+  invalidation_condition?: string;
+}
+
+export interface PositionDetails {
+  entry_oid: number;
+  risk_usd: number;
+  confidence: number;
+  index_col: any;
+  exit_plan: ExitPlan | string;
+  entry_time: number;
+  symbol: string;
+  entry_price: number;
+  tp_oid: number;
+  margin: number;
+  wait_for_fill: boolean;
+  sl_oid: number;
+  oid: number;
+  current_price: number;
+  closed_pnl: number;
+  liquidation_price: number;
+  commission: number;
+  leverage: number;
+  slippage: number;
+  quantity: number;
+  unrealized_pnl: number;
+}
+
 export interface Position {
-  // Define the structure based on actual API response
-  [key: string]: any;
+  id: string;
+  positions: {
+    [symbol: string]: PositionDetails;
+  };
+}
+
+export interface PositionsResponse {
+  positions: Position[];
+  serverTime: number;
 }
 
 export interface Trade {
@@ -69,15 +119,40 @@ export async function getAccountTotals(lastHourlyMarker: number = 99): Promise<A
 }
 
 export async function getCryptoPrices(): Promise<CryptoPrice[]> {
-  return fetchAPI<CryptoPrice[]>('/crypto-prices');
+  const response = await fetchAPI<CryptoPricesResponse>('/crypto-prices');
+  
+  // Transform the API response to the format expected by the UI components
+  return Object.values(response.prices).map(item => ({
+    symbol: item.symbol,
+    name: getCoinName(item.symbol),
+    price: item.price,
+    change: 0, // The API doesn't provide change data, we'll need to calculate it or use a default
+    timestamp: item.timestamp,
+    icon: `/coins/${item.symbol.toLowerCase()}.svg`
+  }));
 }
 
 export async function getPositions(limit: number = 1000): Promise<Position[]> {
-  return fetchAPI<Position[]>(`/positions?limit=${limit}`);
+  const response = await fetchAPI<PositionsResponse>(`/positions?limit=${limit}`);
+  return response.positions;
 }
 
 export async function getTrades(): Promise<Trade[]> {
   return fetchAPI<Trade[]>('/trades');
+}
+
+// Helper function to get coin names based on symbols
+function getCoinName(symbol: string): string {
+  const coinNames: { [key: string]: string } = {
+    'BTC': 'Bitcoin',
+    'ETH': 'Ethereum',
+    'SOL': 'Solana',
+    'BNB': 'Binance Coin',
+    'DOGE': 'Dogecoin',
+    'XRP': 'Ripple'
+  };
+  
+  return coinNames[symbol] || symbol;
 }
 
 // Helper function to map crypto prices to the format used in the UI

@@ -1,67 +1,51 @@
-"use client";
-
-import { useState } from "react";
+import { PositionsDisplay } from "@/components/trading/positions-display";
 
 export function Sidebar() {
-  const [activeTab, setActiveTab] = useState("trades");
-
-  const tabs = [
-    { id: "trades", label: "COMPLETED TRADES" },
-    { id: "chat", label: "MODELCHAT" },
-    { id: "positions", label: "POSITIONS" },
-    { id: "readme", label: "README.TXT" },
-  ];
-
   return (
-    <div className="hidden md:block md:w-[280px] lg:w-[320px] xl:w-[380px] 2xl:w-[500px] flex-shrink-0 md:border-l border-border bg-surface overflow-y-auto md:overflow-hidden">
-      <div className="flex h-full min-h-0 flex-col">
-        <div className="mb-1 flex border-b-2 border-t md:border-t-0 border-border">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              className={`terminal-text flex-1 border-r-2 border-border px-3 py-0.5 md:py-2 text-[8px] md:text-[10px] ${
-                activeTab === tab.id
-                  ? "bg-black text-white"
-                  : "bg-white text-black hover:bg-gray-100"
-              }`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
+    <div className="hidden w-80 flex-col border-l border-border bg-surface p-4 md:flex">
+      <div className="mb-6">
+        <h2 className="terminal-header mb-3 border-b border-border-subtle pb-2 text-lg font-bold text-foreground">
+          TRADING TERMINAL
+        </h2>
+        <div className="space-y-4">
+          <div>
+            <label className="terminal-text mb-1 block text-xs font-medium text-foreground-subtle">
+              MODEL SELECTOR
+            </label>
+            <select className="terminal-input w-full rounded border border-border bg-background p-2 text-sm">
+              <option>deepseek-chat-v3.1</option>
+              <option>claude-sonnet-4-5</option>
+              <option>gpt-5</option>
+              <option>gemini-2.5-pro</option>
+              <option>qwen3-max</option>
+              <option>grok-4</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="terminal-text mb-1 block text-xs font-medium text-foreground-subtle">
+              POSITION SIZE ($)
+            </label>
+            <input 
+              type="number" 
+              defaultValue="1000" 
+              className="terminal-input w-full rounded border border-border bg-background p-2 text-sm"
+            />
+          </div>
+          
+          <div className="flex space-x-2">
+            <button className="terminal-button flex-1 rounded border border-green-500 bg-green-500/10 px-4 py-2 text-sm font-medium text-green-600 hover:bg-green-500/20">
+              LONG
             </button>
-          ))}
-        </div>
-        <div className="min-h-0 flex-1">
-          <div className="live-trades terminal-text flex h-full min-h-0 flex-1 flex-col overflow-hidden font-mono text-xs font-black">
-            <div className="terminal-positive space-y-1 p-2">
-              <div className="flex items-center space-x-2">
-                <span className="terminal-positive">&gt;</span>
-                <span>
-                  <div style={{ display: "inline-block" }}></div>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      msTransition: "opacity 0.5s",
-                      WebkitTransition: "opacity 0.5s",
-                      MozTransition: "opacity 0.5s",
-                      transition: "opacity 0.5s",
-                      opacity: 1,
-                    }}
-                  >
-                    |
-                  </span>
-                </span>
-              </div>
-              <div className="ml-4 flex items-center space-x-2">
-                <span className="terminal-warning">[</span>
-                <span className="animate-pulse">████████████</span>
-                <span className="terminal-warning">]</span>
-              </div>
-              <div className="ml-4 flex items-center space-x-2">
-                <span className="terminal-blue">STATUS: CONNECTING TO SERVER</span>
-              </div>
-            </div>
+            <button className="terminal-button flex-1 rounded border border-red-500 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-500/20">
+              SHORT
+            </button>
           </div>
         </div>
+      </div>
+      
+      <div className="flex-1 overflow-y-auto">
+        <PositionsDisplay />
       </div>
     </div>
   );

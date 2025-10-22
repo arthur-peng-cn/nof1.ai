@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { getCryptoPrices, mapCryptoPricesToMarketData, CryptoPrice } from "@/lib/api/nof1-api";
+import { getCryptoPrices, CryptoPrice } from "@/lib/api/nof1-api";
 
 // Mock data for cryptocurrency prices
 const mockMarketData = [
@@ -24,8 +24,7 @@ export function MobileMarketData() {
       try {
         setLoading(true);
         const prices: CryptoPrice[] = await getCryptoPrices();
-        const mappedData = mapCryptoPricesToMarketData(prices);
-        setMarketData(mappedData);
+        setMarketData(prices);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch market data:", err);
@@ -92,9 +91,11 @@ export function MobileMarketData() {
               <div className="font-mono text-gray-800 text-[9px] font-bold text-center leading-none">
                 <span>${coin.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
-              <div className={`text-[8px] ${coin.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {coin.change >= 0 ? '↑' : '↓'} {Math.abs(coin.change).toFixed(2)}%
-              </div>
+              {coin.change !== undefined && (
+                <div className={`text-[8px] ${coin.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {coin.change >= 0 ? '↑' : '↓'} {Math.abs(coin.change).toFixed(2)}%
+                </div>
+              )}
             </div>
           ))}
         </div>
