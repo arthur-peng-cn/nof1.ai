@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Metrics {
+  id String @id @default(uuid())
+
+  name  String
+  model ModelType
+
+  metrics Json[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chat {
+  id String @id @default(uuid())
+
+  reasoning  String
+  userPrompt String
+  tradings   Trading[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Trading {
+  id String @id @default(uuid())
+
+  symbol     Symbol
+  opeartion  Opeartion
+  leverage   Int?
+  amount     Int?
+  pricing    Int?
+  stopLoss   Int?
+  takeProfit Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Chat   Chat?   @relation(fields: [chatId], references: [id])
+  chatId String?
+}
+
+enum Opeartion {
+  Buy
+  Sell
+  Hold
+}
+
+enum Symbol {
+  BTC
+  ETH
+  BNB
+  SOL
+  DOGE
+}
+
+enum ModelType {
+  Deepseek
+  DeepseekThinking
+  Qwen
+  Doubao
+}
