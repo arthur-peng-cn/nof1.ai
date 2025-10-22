@@ -8,7 +8,6 @@ import { MobileMarketData } from "@/components/trading/mobile-market-data";
 import { MobileActionButtons } from "@/components/trading/mobile-action-buttons";
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileModelSelector } from "@/components/trading/mobile-model-selector";
-import { PositionsDisplay } from "@/components/trading/positions-display";
 
 export default function Home() {
   return (
@@ -47,11 +46,6 @@ export default function Home() {
             
             {/* Desktop Sidebar */}
             <Sidebar />
-          </div>
-          
-          {/* Positions Display - for testing purposes */}
-          <div className="hidden md:block border-t p-4">
-            <PositionsDisplay />
           </div>
         </div>
       </main>

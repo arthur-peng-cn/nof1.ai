@@ -1,7 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export function Header() {
+  const pathname = usePathname();
+  
   return (
     <nav className="sticky top-0 z-50 border-b-2 border-border bg-surface">
       <div className="mx-auto max-w-[95vw] px-2">
@@ -20,11 +23,17 @@ export function Header() {
           
           {/* Desktop Navigation */}
           <div className="hidden items-center space-x-6 md:flex md:absolute md:left-1/2 md:-translate-x-1/2">
-            <Link className="terminal-header text-foreground hover:text-accent-primary" href="/">
+            <Link 
+              className={`terminal-header ${pathname === '/' ? 'text-foreground font-bold' : 'text-foreground hover:text-accent-primary'}`} 
+              href="/"
+            >
               LIVE
             </Link>
             <span className="text-foreground">|</span>
-            <Link className="terminal-header text-foreground hover:text-accent-primary" href="/leaderboard">
+            <Link 
+              className={`terminal-header ${pathname === '/leaderboard' ? 'text-foreground font-bold' : 'text-foreground hover:text-accent-primary'}`} 
+              href="/leaderboard"
+            >
               LEADERBOARD
             </Link>
             <span className="text-foreground">|</span>

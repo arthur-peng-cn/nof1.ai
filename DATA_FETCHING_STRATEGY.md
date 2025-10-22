@@ -13,6 +13,7 @@
 3. **/api/crypto-prices** - 获取加密货币价格数据
 4. **/api/positions?limit=1000** - 获取持仓数据
 5. **/api/trades** - 获取交易数据
+6. **/api/leaderboard** - 获取排行榜数据
 
 ## CORS问题解决方案
 
@@ -72,6 +73,32 @@
           }
         }
       }
+    }
+  ],
+  "serverTime": 1761101618869
+}
+```
+
+### 3. 排行榜数据结构
+
+排行榜数据包含各AI模型的性能排名：
+
+```json
+{
+  "leaderboard": [
+    {
+      "id": 1,
+      "model": "deepseek-chat-v3.1",
+      "totalPnl": 1245.32,
+      "winRate": 68.5,
+      "trades": 142
+    },
+    {
+      "id": 2,
+      "model": "claude-sonnet-4-5",
+      "totalPnl": 987.45,
+      "winRate": 62.3,
+      "trades": 138
     }
   ],
   "serverTime": 1761101618869
@@ -148,13 +175,30 @@
 - **缓存策略**: 无缓存，实时获取
 - **错误处理**: 显示错误消息，继续轮询
 
+### 6. 排行榜数据 (/api/leaderboard)
+
+- **用途**: 在排行榜页面显示AI模型性能排名
+- **更新频率**: 每小时更新一次
+- **缓存策略**: 无缓存，实时获取
+- **错误处理**: 显示错误消息，使用mock数据作为降级方案
+- **数据结构**:
+  ```typescript
+  interface LeaderboardEntry {
+    id: number;
+    model: string;
+    totalPnl: number;
+    winRate: number;
+    trades: number;
+  }
+  ```
+
 ## 页面规则
 
 ### 1. 数据优先级
 
 1. **高优先级**: 加密货币价格（影响用户核心体验）
 2. **中优先级**: 账户信息、持仓数据（影响交易决策）
-3. **低优先级**: 交易历史、成立以来数据（辅助信息）
+3. **低优先级**: 交易历史、成立以来数据、排行榜（辅助信息）
 
 ### 2. 加载状态处理
 

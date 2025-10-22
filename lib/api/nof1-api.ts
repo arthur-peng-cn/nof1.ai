@@ -8,6 +8,7 @@
  * - https://nof1.ai/api/crypto-prices
  * - https://nof1.ai/api/positions?limit=1000
  * - https://nof1.ai/api/trades
+ * - https://nof1.ai/api/leaderboard
  */
 
 // Define TypeScript interfaces for the API responses
@@ -84,6 +85,20 @@ export interface PositionsResponse {
   serverTime: number;
 }
 
+// Leaderboard data interfaces
+export interface LeaderboardEntry {
+  id: number;
+  model: string;
+  totalPnl: number;
+  winRate: number;
+  trades: number;
+}
+
+export interface LeaderboardResponse {
+  leaderboard: LeaderboardEntry[];
+  serverTime: number;
+}
+
 export interface Trade {
   // Define the structure based on actual API response
   [key: string]: any;
@@ -137,6 +152,17 @@ export async function getPositions(limit: number = 1000): Promise<Position[]> {
   return response.positions;
 }
 
+export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
+  try {
+    const response = await fetchAPI<LeaderboardResponse>('/leaderboard');
+    return response.leaderboard;
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    // Return mock data as fallback
+    return getMockLeaderboard();
+  }
+}
+
 export async function getTrades(): Promise<Trade[]> {
   return fetchAPI<Trade[]>('/trades');
 }
@@ -165,4 +191,17 @@ export function mapCryptoPricesToMarketData(prices: CryptoPrice[]): any[] {
     change: price.change,
     icon: price.icon || `/coins/${price.symbol.toLowerCase()}.svg`
   }));
+}
+
+// Mock leaderboard data
+function getMockLeaderboard(): LeaderboardEntry[] {
+  return [
+    { id: 1, model: "deepseek-chat-v3.1", totalPnl: 1245.32, winRate: 68.5, trades: 142 },
+    { id: 2, model: "claude-sonnet-4-5", totalPnl: 987.45, winRate: 62.3, trades: 138 },
+    { id: 3, model: "gpt-5", totalPnl: 876.21, winRate: 59.7, trades: 135 },
+    { id: 4, model: "gemini-2.5-pro", totalPnl: 756.88, winRate: 57.2, trades: 132 },
+    { id: 5, model: "qwen3-max", totalPnl: 623.45, winRate: 54.8, trades: 128 },
+    { id: 6, model: "grok-4", totalPnl: 521.67, winRate: 52.1, trades: 125 },
+    { id: 7, model: "buynhold_btc", totalPnl: 432.10, winRate: 48.9, trades: 1 },
+  ];
 }
