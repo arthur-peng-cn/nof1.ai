@@ -2,6 +2,9 @@
 
 This is a Next.js implementation of the Alpha Arena AI trading platform interface.
 
+# demo looks
+![Alpha Arena](screenshot.png)
+
 ## Project Structure
 
 ```
